@@ -18,12 +18,12 @@ uint32_t wifiWait() {
     if (!MDNS.begin(sysName.c_str())) {
       Serial.print("[mDNS: failed]");
     } else {
-      MDNS.addService("http", "tcp", 80);  // Add service to MDNS-SD
+      //MDNS.addService("http", "tcp", 80);  // Add service to MDNS-SD
       Serial.print("[mDNS: started]");
     }
         #ifdef ESP8266
-    MDNS.addService("http", "tcp", 80);
-    MDNS.addService("hap", "tcp", 5111);
+    //MDNS.addService("http", "tcp", 80);
+    MDNS.addService("hap", "tcp", 5111); //5111
     //c#=1s#=1ff=0sf=0ci=1
     // Add service to MDNS-SD
     MDNS.addServiceTxt("hap", "tcp", "c#", "1");
@@ -34,7 +34,7 @@ uint32_t wifiWait() {
     MDNS.addServiceTxt("hap", "tcp", "md", "esp");
     MDNS.addServiceTxt("hap", "tcp", "id", "30:ae:a4:3:2b:9c");
     #else
-    //MDNS.addService("_http", "_tcp", 80);
+    MDNS.addService("_http", "_tcp", 80);
     MDNS.addService("_hap", "_tcp", 5111);
     //c#=1s#=1ff=0sf=0ci=1
     const char * arduTxtData[7] = {
