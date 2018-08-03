@@ -71,7 +71,12 @@ typedef enum PairingCodesTLV8 {
 PairingCodesTLV8_t hk_state = kTLVType_Method_None;
 PairingCodesTLV8_t method = kTLVType_Method_None;
 
+TLV8Class tlv8;
+
 void pairing() {
-  
+  struct tlv_map PairTagTLV8;
+  memset(&PairTagTLV8, 0, sizeof(tlv_map));  
+
+  tlv8.decode( raw, len, &PairTagTLV8 );
 }
 

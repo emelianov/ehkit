@@ -10,8 +10,12 @@ WiFiServer server(5111);
 // string buffers for receiving URL and arguments
 char bufferUrl[256];
 char bufferArgs[512];
+char bufferHeader[512];
+uint8_t raw[4096];
 int urlChars = 0;
 int argChars = 0;
+int headerChars = 0;
+int rawSize = 0;
 
 // number of characters read on the current line
 int lineChars = 0;
@@ -154,9 +158,12 @@ uint32_t web() {
     state = 0;
     urlChars = 0;
     argChars = 0;
+    headerChars = 0;
     lineChars = 0;
     bufferUrl[0] = 0;
     bufferArgs[0] = 0;
+    bufferHeader[0] = 0;
+    DataSize = 0;
 
     //while (client.connected()) 
     if (client.connected()) 
@@ -205,6 +212,20 @@ uint32_t web() {
           // Received a line with no characters; this means the client has ended their request
           state = 4;
         }
+        if (state == 3 && headerChars < 511) {
+          if (c == '\n') {
+            if (strcmp(bufferHeader, P("Length:")) == 0) {
+              rawSize  = atoi(bufferHeader + 7);
+              Serial.print("Data size: ");
+              Serial.println(rawSize);
+            }
+            headerChars = 0;
+            bufferHeader[0] = 0;
+          } else {
+            bufferHeader[headerChars++] = c;
+            bufferHeader[headerChars] = 0;
+          }
+        }
 
         // record how many characters on the line so far:
         if (c == '\n')
@@ -217,7 +238,10 @@ uint32_t web() {
         {
           // Response given
           state = 5; 
-
+          if (client.readBytes(raw, rawSize) != rawSize) {
+            Serial.println("Error getting raw data");
+            rawSize = 0;
+          }
           // increment internally for fun purposes
           requests++;
           Serial.print(P("Request # "));
