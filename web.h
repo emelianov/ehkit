@@ -7,6 +7,8 @@ char p_buffer[150];
 
 WiFiServer server(5111);
 
+#define LENHEADER "Content-Length:"
+
 // string buffers for receiving URL and arguments
 char bufferUrl[256];
 char bufferArgs[512];
@@ -163,7 +165,7 @@ uint32_t web() {
     bufferUrl[0] = 0;
     bufferArgs[0] = 0;
     bufferHeader[0] = 0;
-    DataSize = 0;
+    rawSize = 0;
 
     //while (client.connected()) 
     if (client.connected()) 
@@ -214,8 +216,9 @@ uint32_t web() {
         }
         if (state == 3 && headerChars < 511) {
           if (c == '\n') {
-            if (strcmp(bufferHeader, P("Length:")) == 0) {
-              rawSize  = atoi(bufferHeader + 7);
+            //Serial.println(bufferHeaer)
+            if (strncmp(bufferHeader, P(LENHEADER), sizeof(LENHEADER) - 1) == 0) {
+              rawSize  = atoi(bufferHeader + sizeof(LENHEADER));
               Serial.print("Data size: ");
               Serial.println(rawSize);
             }
@@ -241,6 +244,12 @@ uint32_t web() {
           if (client.readBytes(raw, rawSize) != rawSize) {
             Serial.println("Error getting raw data");
             rawSize = 0;
+          } else {
+            for (uint8_t i = 0; i < rawSize; i++) {
+              Serial.print(raw[i], HEX);
+              Serial.print(" ");
+            }
+            Serial.println();
           }
           // increment internally for fun purposes
           requests++;

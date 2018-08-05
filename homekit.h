@@ -5,6 +5,8 @@
 #include <TLV8.h>
 
 extern char bufferUrl[256];
+extern uint8_t raw[4096];
+extern int rawSize;
 
 typedef enum PairingCodesTLV8 {
     // Methods Table 4.4
@@ -77,6 +79,10 @@ void pairing() {
   struct tlv_map PairTagTLV8;
   memset(&PairTagTLV8, 0, sizeof(tlv_map));  
 
-  tlv8.decode( raw, len, &PairTagTLV8 );
+  if (tlv8.decode( raw, rawSize, &PairTagTLV8 ) == TLV_SUCESS) {
+    tlv_t tl = tlv8.getTLVAtIndex(PairTagTLV8, 0);
+    Serial.print("Type: ");
+    Serial.println(tl.type);
+  }
 }
 
