@@ -18,6 +18,8 @@ int urlChars = 0;
 int argChars = 0;
 int headerChars = 0;
 int rawSize = 0;
+uint8_t response[4096];
+size_t responseLen = 0;
 
 // number of characters read on the current line
 int lineChars = 0;
@@ -61,6 +63,10 @@ void sendHttpResponseOk(WiFiClient client)
   client.println(P("HTTP/1.1 200 OK"));
   client.println(P("Content-Type: text/html"));
   client.println(P("Connnection: keep-alive")); // keep connection open
+  if (responseLen > 0) {
+    client.print(P("Content-Length: "));
+    client.println(responseLen);
+  }
   client.println();
 }
 
@@ -100,6 +106,10 @@ void respond(WiFiClient client)
   else if (strcmp(bufferUrl, P("pair-setup")) == 0)
   {
     pairing();
+    if (responseLen > 0) {
+      sendHttpResponseOk(client);
+      client.write(response, responseLen);
+    }
   }
   else if (strcmp(bufferUrl, P("test.html")) == 0)
   {
@@ -166,6 +176,7 @@ uint32_t web() {
     bufferArgs[0] = 0;
     bufferHeader[0] = 0;
     rawSize = 0;
+    responseLen = 0;
 
     //while (client.connected()) 
     if (client.connected()) 

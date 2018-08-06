@@ -186,8 +186,7 @@ int test_rfc_5054_compat()
   Serial.println("v is matched");
 
   usr = srp_user_new(alg, ng_type, username, username, (const unsigned char *)password, strlen(password), NULL, NULL);
-  srp_user_start_authentication(
-    usr, NULL, (unsigned char *)srp_5054_a, sizeof(srp_5054_a), &bytes_A, &len_A);
+  srp_user_start_authentication(usr, NULL, (unsigned char *)srp_5054_a, sizeof(srp_5054_a), &bytes_A, &len_A);
 
   yield();
 
@@ -257,7 +256,7 @@ cleanup:
 
   return 0;
 }
-
+/*
 void espOverclock() {
    REG_SET_BIT(0x3ff00014, BIT(0));
    //os_update_cpu_frequency(160);
@@ -282,8 +281,4 @@ void espWatchdogEnable() {
   timer1_disable();
   timer1_detachInterrupt();
 }
-
-uint32_t srpInit() {
-  
-}
-
+*/
