@@ -11,6 +11,7 @@ void espNormal() {
 }
 
 void ICACHE_RAM_ATTR wdt_timer_isr(){
+  Serial.print(".");
   wdt_reset();
 }
 void espWatchdogDisable() {
@@ -18,9 +19,10 @@ void espWatchdogDisable() {
   timer1_attachInterrupt(wdt_timer_isr);
   timer1_write(1200000);
   timer1_enable(TIM_DIV265, TIM_EDGE, TIM_LOOP);
-  //wdt_disable();  
+  wdt_disable();  
 }
 void espWatchdogEnable() {
   timer1_disable();
   timer1_detachInterrupt();
+  wdt_enable(0);
 }

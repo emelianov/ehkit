@@ -53,6 +53,22 @@ int state = 0;
 
 WiFiClient client;
 
+void sendHttpResponseTlv(WiFiClient client)
+{
+  Serial.println(P("200 OK"));
+  Serial.println();
+  
+  // send a standard http response header
+  client.println(P("HTTP/1.1 200 OK"));
+  client.println(P("Content-Type: application/pairing+tlv8"));
+  client.println(P("Connnection: keep-alive")); // keep connection open
+  if (responseLen > 0) {
+    client.print(P("Content-Length: "));
+    client.println(responseLen);
+  }
+  client.println();
+}
+
 // 200 OK means the resource was located on the server and the browser (or service consumer) should expect a happy response
 void sendHttpResponseOk(WiFiClient client)
 {
@@ -107,7 +123,7 @@ void respond(WiFiClient client)
   {
     pairing();
     if (responseLen > 0) {
-      sendHttpResponseOk(client);
+      sendHttpResponseTlv(client);
       client.write(response, responseLen);
     }
   }

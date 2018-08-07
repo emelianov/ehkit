@@ -2,9 +2,10 @@
  * HomeKit experiments scratch
  * 
  */
+#define HOMEKIT_DEBUG
 
 #include <Run.h>
-#include "srp.h"
+#include <wolfssl.h>
 #include "homekit.h"
 #include "wifi.h"
 #include "web.h"
@@ -26,4 +27,6 @@ void setup()
 void loop()
 {
   taskExec();
+  wdt_reset();
+  yield();
 }
